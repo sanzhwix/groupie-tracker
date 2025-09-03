@@ -1,7 +1,8 @@
 package application
 
 import (
-	"groupie-tracker/internal/"
+	"groupie-tracker/internal/domain"
+	"groupie-tracker/internal/infrastructure/api"
 )
 
 type ArtistService struct {}
