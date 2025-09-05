@@ -8,7 +8,7 @@ import (
 
 const ArtistApi = "https://groupietrackers.herokuapp.com/api/artists"
 
-func FetchArtist() ([]ArtistFull, error) {
+func FetchArtist() ([]Artist, error) {
 	resp, err := http.Get(ArtistApi)
 	if err != nil {
 		return nil, err
@@ -19,7 +19,7 @@ func FetchArtist() ([]ArtistFull, error) {
 		return nil, fmt.Errorf("status code is not the OK! %d", resp.StatusCode)
 	}
 
-	var artistsInfo []ArtistFull
+	var artistsInfo []Artist
 	err = json.NewDecoder(resp.Body).Decode(&artistsInfo)
 	if err != nil {
 		return nil, fmt.Errorf("error with decoding JSON %v", err)
@@ -29,7 +29,7 @@ func FetchArtist() ([]ArtistFull, error) {
 }
 
 // LOCATION FETCHING
-const LocationsApi = "https://groupietrackers.herokuapp.com/api/locations"
+// const LocationsApi = "https://groupietrackers.herokuapp.com/api/locations"
 
 type LocationsResponse struct {
 	ID            int      `json:"id"`
@@ -37,8 +37,8 @@ type LocationsResponse struct {
 	// DatesURL      string   `json:"dates"`
 }
 
-func FetchLocactions() ([]string, error) {
-	resp, err := http.Get(LocationsApi)
+func FetchLocactions(url string) ([]string, error) {
+	resp, err := http.Get(url)
 	if err != nil {
 		return nil, fmt.Errorf("error fetching locations! %v", err)
 	}
@@ -59,15 +59,15 @@ func FetchLocactions() ([]string, error) {
 }
 
 // FETCING DATES
-const DatesApi = "https://groupietrackers.herokuapp.com/api/dates"
+// const DatesApi = "https://groupietrackers.herokuapp.com/api/dates"
 
 type DatesResponse struct {
 	ID    int      `json:"id"`
 	Dates []string `json:"dates"`
 }
 
-func FetchDates() ([]string, error) {
-	resp, err := http.Get(DatesApi)
+func FetchDates(url string) ([]string, error) {
+	resp, err := http.Get(url)
 	if err != nil {
 		return nil, fmt.Errorf("error caused fethcing Dates! %v", err)
 	}
@@ -85,4 +85,34 @@ func FetchDates() ([]string, error) {
 	}
 
 	return datesResp.Dates, nil
+}
+
+// FETCHING RELATIONS
+
+// const RelationsApi = "https://groupietrackers.herokuapp.com/api/relation"
+
+type RelationsResp struct {
+	ID             int                 `json:"id"`
+	DatesLocations map[string][]string `json:"datesLocations"`
+}
+
+func FetchRelations(url string) (map[string][]string, error) {
+	resp, err := http.Get(url)
+	if err != nil {
+		return nil, fmt.Errorf("error with fethcing relations %v", err)
+	}
+
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("status is not ok in relations %v", resp.StatusCode)
+	}
+
+	var Rel RelationsResp
+	err = json.NewDecoder(resp.Body).Decode(&Rel)
+	if err != nil {
+		return nil, fmt.Errorf("erorr fetching relations! %v", err)
+	}
+
+	return Rel.DatesLocations, nil
 }
