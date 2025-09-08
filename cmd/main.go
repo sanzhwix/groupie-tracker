@@ -3,16 +3,24 @@ package main
 import (
 	"fmt"
 	"groupie-tracker/internal"
+	"html/template"
+	"log"
+	"net/http"
 )
 
 func main() {
-	artists, err := internal.FetchArtist()
+	var err error
+	internal.Tpl, err = template.ParseGlob("./internal/templates/*.html")
 	if err != nil {
-		fmt.Println("Error fetching ArtistsFull!")
-		return
+		log.Fatal("Something went wrong while parsing templates!")
 	}
 
-	for i := 0; i <= 5; i++ {
-		fmt.Printf("%d: %s (%d)\n", artists[i].ID, artists[i].Name, artists[i].CreationDate)
-	}
+	mux := http.NewServeMux()
+	fs := http.FileServer(http.Dir("./internal/static"))
+	http.Handle("/static/", http.StripPrefix("/static/", fs))
+
+	mux.HandleFunc("/", internal.MainHandler)
+
+	fmt.Println("Server running at http://localhost:8080")
+	log.Fatal(http.ListenAndServe(":8080", mux))
 }
