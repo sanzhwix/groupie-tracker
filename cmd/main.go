@@ -2,10 +2,11 @@ package main
 
 import (
 	"fmt"
-	"groupie-tracker/internal"
 	"html/template"
 	"log"
 	"net/http"
+
+	"groupie-tracker/internal"
 )
 
 func main() {
@@ -17,7 +18,7 @@ func main() {
 
 	mux := http.NewServeMux()
 	fs := http.FileServer(http.Dir("./internal/static"))
-	http.Handle("/static/", http.StripPrefix("/static/", fs))
+	mux.Handle("/static/", http.StripPrefix("/static/", fs))
 
 	mux.HandleFunc("/", internal.MainHandler)
 

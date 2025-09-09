@@ -1,9 +1,26 @@
 body {
-  background-color:white;
+  background-color:black;
+}
+.title, h1 {
+  color:rgb(235, 63, 63);
 }
 
-.card {
-  width:100px;
-  height:100px;
+.mainPageDiv {
+  display: flex;
+  max-width:1200px;
+  justify-content: space-around;
 }
 
+.card{
+  width: 400px;
+  height: 400px;
+  margin: 20px;
+}
+
+h3 {
+  color:white;
+}
+.content {
+  width: fit-content;
+  height: fit-content;
+}
